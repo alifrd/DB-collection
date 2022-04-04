@@ -1,0 +1,41 @@
+version: '3'
+services:
+  mysql-master:
+    image: percona:ps-8.0
+    container_name: mysql-master
+    restart: unless-stopped
+    env_file: ./master/.env.master
+    cap_add:
+      - all
+    volumes:
+      - ./master/data:/var/lib/mysql
+      - ./master/my.cnf:/etc/my.cnf
+    environment:
+      - TZ:${TZ}
+      - MYSQL_USER:${MYSQL_USER}
+      - MYSQL_PASSWORD:${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD:${MYSQL_PASSWORD}
+    networks:
+      default:
+        aliases:
+          - mysql
+
+  mysql-slave:
+    image: percona:ps-8.0
+    container_name: mysql-slave
+    restart: unless-stopped
+    env_file: ./slave/.env.slave
+    cap_add:
+      - all
+    volumes:
+      - ./slave/data:/var/lib/mysql
+      - ./slave/my.cnf:/etc/my.cnf
+    environment:
+      - TZ:${TZ}
+      - MYSQL_USER:${MYSQL_USER}
+      - MYSQL_PASSWORD:${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD:${MYSQL_ROOT_PASSWORD}
+    networks:
+      default:
+        aliases:
+          - mysql
